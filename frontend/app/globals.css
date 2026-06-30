@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #faf8f4;
+  --paper-raised: #ffffff;
+  --ink: #211f1c;
+  --ink-soft: #6b6358;
+  --rule: #e4ddd0;
+  --archive: #3b5d50;
+  --archive-soft: #e9efe9;
+  --gold: #b8893f;
+  --gold-soft: #f3e9d6;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-archive: var(--archive);
+  --color-archive-soft: var(--archive-soft);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --font-display: var(--font-source-serif);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* subtle paper texture */
+.paper-grain {
+  background-image: radial-gradient(var(--rule) 0.5px, transparent 0.5px);
+  background-size: 14px 14px;
+}
+
+@keyframes pulse-dot {
+  0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+.thinking-dot {
+  animation: pulse-dot 1.2s infinite ease-in-out;
+}

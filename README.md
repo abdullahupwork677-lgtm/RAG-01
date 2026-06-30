@@ -48,7 +48,7 @@ Basic-Rag/                          ← Backend (this repo)
 ├── .env / .env.example
 └── .gitignore
 
-rag-chat-frontend/rag-chat-frontend/  ← Frontend (separate project)
+frontend/                            ← Frontend (Next.js 16)
 ├── app/page.tsx                    Chat screen
 ├── app/layout.tsx                  Root layout with fonts
 ├── app/globals.css                 Tailwind + custom design tokens
@@ -99,11 +99,8 @@ Try it: `curl http://localhost:8000/health`
 
 ```bash
 cd frontend
-
 npm install
 cp .env.local.example .env.local
-# Edit if your backend isn't at localhost:8000
-
 npm run dev
 ```
 
