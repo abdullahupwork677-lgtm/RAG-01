@@ -18,9 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ─── Register Routes ───────────────────────────────────────
 app.include_router(rag.router, prefix="/rag", tags=["RAG"])
-# app.include_router(auth.router, prefix="/auth", tags=["Auth"])  # add more later
 
 @app.get("/health")
 async def health():

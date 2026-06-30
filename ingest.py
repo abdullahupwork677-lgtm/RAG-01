@@ -58,36 +58,35 @@ def chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
 
 
 def ingest():
-    print("\n🔍 Loading documents...")
+    print("\n[1/4] Loading documents...")
     docs = load_all_docs(DOCS_FOLDER)
 
     if not docs:
-        print(f"❌ No PDFs or TXT files found in '{DOCS_FOLDER}/' folder.")
-        print("   Add some files and run ingest.py again.")
+        print(f"  No PDFs or TXT files found in '{DOCS_FOLDER}/' folder.")
+        print("  Add some files and run ingest.py again.")
         return
 
-    print(f"\n✂️  Chunking documents...")
+    print(f"\n[2/4] Chunking documents...")
     all_chunks = []
     all_ids    = []
     all_meta   = []
 
     for doc in docs:
         chunks = chunk_text(doc["text"])
-        print(f"   {doc['filename']} → {len(chunks)} chunks")
+        print(f"  {doc['filename']} -> {len(chunks)} chunks")
         for i, chunk in enumerate(chunks):
             all_chunks.append(chunk)
             all_ids.append(f"{doc['filename']}_chunk_{i}")
             all_meta.append({"source": doc["filename"], "chunk_index": i})
 
-    print(f"\n🧠 Generating embeddings for {len(all_chunks)} chunks...")
-    print("   (First run downloads the model ~90MB, be patient)")
-    model = SentenceTransformer("all-MiniLM-L6-v2")  # fast & good quality
+    print(f"\n[3/4] Generating embeddings for {len(all_chunks)} chunks...")
+    print("  (First run downloads the model ~90MB, be patient)")
+    model = SentenceTransformer("all-MiniLM-L6-v2")
     embeddings = model.encode(all_chunks, show_progress_bar=True)
 
-    print(f"\n💾 Saving to ChromaDB...")
+    print(f"\n[4/4] Saving to ChromaDB...")
     client = chromadb.PersistentClient(path="./chroma_db")
 
-    # Delete old collection if exists (fresh ingest)
     try:
         client.delete_collection(COLLECTION_NAME)
     except Exception:
@@ -101,8 +100,8 @@ def ingest():
         metadatas=all_meta,
     )
 
-    print(f"\n✅ Done! {len(all_chunks)} chunks stored in ChromaDB.")
-    print("   Now run: python query.py")
+    print(f"\nDone! {len(all_chunks)} chunks stored in ChromaDB.")
+    print("Run: python query.py to start asking questions.")
 
 
 if __name__ == "__main__":

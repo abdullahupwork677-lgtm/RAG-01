@@ -1,6 +1,25 @@
+# ─── Python ────────────────────────────────────────────
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# ─── Virtual Environment ───────────────────────────────
+.env
 env/
-chroma_db/
+venv/
+.venv/
+
+# ─── IDE / Editor ──────────────────────────────────────
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ─── Project-specific ──────────────────────────────────
+chroma_db/

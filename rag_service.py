@@ -1,10 +1,15 @@
 import os
+from dotenv import load_dotenv
 import chromadb
 from sentence_transformers import SentenceTransformer
 from groq import Groq
 
+load_dotenv()
+
 # ─── Config ───────────────────────────────────────────────
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY", "gsk_your_key_here")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise RuntimeError("GROQ_API_KEY not set. Add it to your .env file.")
 GROQ_MODEL      = "llama-3.1-8b-instant"
 COLLECTION_NAME = "my_docs"
 TOP_K           = 5
