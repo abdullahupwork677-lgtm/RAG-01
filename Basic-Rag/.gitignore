@@ -1,26 +1,6 @@
-# ─── Python ────────────────────────────────────────────
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-*.egg
-.eggs/
+env/ 
+node_modules/
+.env 
+__pycache__/ 
+.env.example
 
-# ─── Virtual Environment ───────────────────────────────
-.env
-env/
-venv/
-.venv/
-.env.example/
-
-# ─── IDE / Editor ──────────────────────────────────────
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# ─── Project-specific ──────────────────────────────────
-chroma_db/

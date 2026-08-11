@@ -56,69 +56,97 @@ export default function Home() {
   const handleReset = () => setMessages([]);
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="border-b border-rule bg-paper-raised">
-        <div className="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight">
-              Archive
-            </h1>
-            <p className="text-xs text-ink-soft font-mono mt-0.5">
-              grounded answers from your ingested documents
-            </p>
-          </div>
-          {messages.length > 0 && (
-            <button
-              onClick={handleReset}
-              className="text-xs font-mono uppercase tracking-wide text-ink-soft hover:text-archive transition-colors"
-            >
-              New conversation
-            </button>
-          )}
-        </div>
-      </header>
-
-      <main ref={scrollRef} className="flex-1 overflow-y-auto paper-grain">
-        <div className="max-w-3xl mx-auto px-5 py-6 flex flex-col gap-6">
-          {messages.length === 0 && (
-            <div className="text-center py-20">
-              <div className="font-display text-3xl text-ink-soft mb-2">
-                What would you like to know?
+    <div className="hero-bg flex min-h-screen w-full items-stretch p-0 md:h-screen md:overflow-hidden md:p-12">
+      <div className="mx-auto flex h-full w-full max-w-[1600px] flex-col gap-8 md:flex-row">
+        <div className="flex w-full flex-col gap-6 md:w-[58%]">
+          <header className="flex w-full shrink-0 items-center justify-center bg-[#f5f5f5] px-4 py-1.5">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex-1"></div>
+              <div className="flex flex-col items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/tt-navbar.png"
+                  alt="Turbo Turismo"
+                  className="h-8 max-w-full"
+                />
               </div>
-              <p className="text-sm text-ink-soft">
-                Questions are answered using only what&apos;s in your indexed
-                documents.
-              </p>
+              <div className="flex flex-1 justify-end">
+                {messages.length > 0 && (
+                  <button
+                    onClick={handleReset}
+                    className="text-xs font-mono uppercase tracking-wide text-text-faint hover:text-accent transition-colors"
+                  >
+                    New conversation
+                  </button>
+                )}
+              </div>
             </div>
-          )}
+          </header>
 
-          {messages.map((m) => (
-            <ChatMessage key={m.id} message={m} />
-          ))}
-
-          {loading && (
-            <div className="flex gap-1 px-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-archive thinking-dot" style={{ animationDelay: "0ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-archive thinking-dot" style={{ animationDelay: "150ms" }} />
-              <span className="w-1.5 h-1.5 rounded-full bg-archive thinking-dot" style={{ animationDelay: "300ms" }} />
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto border border-black/10 bg-[#f5f5f5] p-6 sm:p-10 thin-scroll"
+          >
+            <div className="text-sm font-bold uppercase tracking-[0.2em] text-black mb-6 border-b border-black/10 pb-2">
+              Turbo Turismo AI Assistant
             </div>
-          )}
-        </div>
-      </main>
 
-      <footer className="border-t border-rule bg-paper-raised">
-        <div className="max-w-3xl mx-auto px-5 py-4">
-          <ChatInput
-            value={input}
-            onChange={setInput}
-            onSubmit={handleSubmit}
-            disabled={loading}
-          />
-          <p className="text-[11px] text-ink-soft text-center mt-2 font-mono">
-            Enter to send · Shift+Enter for a new line
-          </p>
+            <div className="space-y-4">
+              {messages.length === 0 && !loading && (
+                <div className="text-center py-10">
+                  <div className="font-mono text-xs uppercase tracking-[0.2em] text-text-faint">
+                    Ask us anything
+                  </div>
+                  <p className="text-sm text-text-dim mt-1">
+                    Answers are grounded in Turbo Turismo&apos;s documents.
+                  </p>
+                </div>
+              )}
+
+              {messages.map((m) => (
+                <ChatMessage key={m.id} message={m} />
+              ))}
+
+              {loading && (
+                <div className="flex gap-1 px-1">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-accent thinking-dot"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-accent thinking-dot"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-accent thinking-dot"
+                    style={{ animationDelay: "300ms" }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="shrink-0">
+            <ChatInput
+              value={input}
+              onChange={setInput}
+              onSubmit={handleSubmit}
+              disabled={loading}
+            />
+          </div>
         </div>
-      </footer>
+
+        <div className="hidden w-full flex-col items-center justify-center overflow-hidden md:flex md:w-[42%]">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-8">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/tt-car-logos.png"
+              alt="Car Logos"
+              className="w-full max-w-[420px] h-auto max-h-full object-contain"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

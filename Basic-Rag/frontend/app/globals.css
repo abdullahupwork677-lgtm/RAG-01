@@ -1,42 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #faf8f4;
-  --paper-raised: #ffffff;
-  --ink: #211f1c;
-  --ink-soft: #6b6358;
-  --rule: #e4ddd0;
-  --archive: #3b5d50;
-  --archive-soft: #e9efe9;
-  --gold: #b8893f;
-  --gold-soft: #f3e9d6;
+  --bg: #ffffff;
+  --panel: #f5f5f5;
+  --panel-alt: #ffffff;
+  --panel-hover: #efefef;
+  --border: rgba(0, 0, 0, 0.1);
+  --accent: #000000;
+  --accent-hover: #222222;
+  --text: #000000;
+  --text-dim: rgba(0, 0, 0, 0.7);
+  --text-faint: rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-paper-raised: var(--paper-raised);
-  --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
-  --color-rule: var(--rule);
-  --color-archive: var(--archive);
-  --color-archive-soft: var(--archive-soft);
-  --color-gold: var(--gold);
-  --color-gold-soft: var(--gold-soft);
-  --font-display: var(--font-source-serif);
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-alt: var(--panel-alt);
+  --color-panel-hover: var(--panel-hover);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-text: var(--text);
+  --color-text-dim: var(--text-dim);
+  --color-text-faint: var(--text-faint);
   --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains);
+  --font-mono: var(--font-plex-mono);
+  --font-display: var(--font-fraunces);
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* subtle paper texture */
-.paper-grain {
-  background-image: radial-gradient(var(--rule) 0.5px, transparent 0.5px);
-  background-size: 14px 14px;
+.hero-bg {
+  background: #fff;
+}
+
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @keyframes pulse-dot {

@@ -10,7 +10,6 @@ CHUNK_OVERLAP = 50          # Overlap between chunks (avoids cutting context)
 COLLECTION_NAME = "my_docs"
 # ──────────────────────────────────────────────────────────
 
-
 def load_pdf(filepath):
     """Extract all text from a PDF file."""
     text = ""

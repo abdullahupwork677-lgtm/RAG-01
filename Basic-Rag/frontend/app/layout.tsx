@@ -1,26 +1,28 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, Fraunces, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-
-const sourceSerif = Source_Serif_4({
-  variable: "--font-source-serif",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
 });
 
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "Archive — RAG Chat",
-  description: "Ask questions grounded in your ingested documents.",
+  title: "Turbo Turismo — Vehicle Chat",
+  description:
+    "Ask questions grounded in your Turbo Turismo documents.",
+  icons: { icon: "/tt-icon.png" },
 };
 
 export default function RootLayout({
@@ -31,9 +33,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${fraunces.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink">
+      <body className="min-h-full flex flex-col bg-bg text-text">
         {children}
       </body>
     </html>
