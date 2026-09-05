@@ -3,7 +3,7 @@ import Link from "next/link";
 import ArchitectureDiagram from "@/components/ArchitectureDiagram";
 
 export const metadata: Metadata = {
-  title: "Architecture — Turbo Turismo AI",
+  title: "Architecture - Turbo Turismo AI",
   description:
     "Grounded RAG pipeline behind the Turbo Turismo document assistant.",
 };

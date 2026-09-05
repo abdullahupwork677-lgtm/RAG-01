@@ -30,7 +30,7 @@ const rajdhani = Rajdhani({
 });
 
 export const metadata: Metadata = {
-  title: "Turbo Turismo — Vehicle Chat",
+  title: "Turbo Turismo - Vehicle Chat",
   description:
     "Ask questions grounded in your Turbo Turismo documents.",
   icons: { icon: "/tt-icon.png" },

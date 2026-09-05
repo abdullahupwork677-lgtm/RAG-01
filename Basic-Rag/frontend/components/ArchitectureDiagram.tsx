@@ -128,7 +128,7 @@ export default function ArchitectureDiagram() {
           ></svg>
 
           <div className="arch-lane" style={{ left: 0, top: 6 }}>
-            — offline · document ingestion —
+            offline · document ingestion
           </div>
 
           <div
@@ -171,7 +171,7 @@ export default function ArchitectureDiagram() {
           </div>
 
           <div className="arch-lane" style={{ left: 0, top: 92 }}>
-            — live query path —
+            live query path
           </div>
 
           <div
@@ -268,7 +268,7 @@ export default function ArchitectureDiagram() {
             style={{ left: 690, top: 480, maxWidth: 260 }}
           >
             <b>Generate</b> builds a grounded prompt and calls the LLM, which is
-            instructed to answer <b>only from the retrieved context</b> — no
+            instructed to answer <b>only from the retrieved context</b>: no
             hallucination.
           </div>
 
@@ -276,7 +276,7 @@ export default function ArchitectureDiagram() {
             className="arch-note"
             style={{ left: 0, top: 620, maxWidth: 1200 }}
           >
-            <b>Data flow</b> — ingest.py runs offline to index documents into
+            <b>Data flow</b>: ingest.py runs offline to index documents into
             ChromaDB. At query time, the question is embedded and matched
             against that index; the top chunks become the context for the
             Groq model, and the answer plus its sources are returned to the
@@ -305,7 +305,7 @@ export default function ArchitectureDiagram() {
           </div>
         </div>
         <div>
-          Answers are always grounded in the retrieved document chunks — the
+          Answers are always grounded in the retrieved document chunks: the
           model is instructed to say &quot;I don&apos;t know&quot; when the
           context is insufficient, and every reply cites its sources.
         </div>
