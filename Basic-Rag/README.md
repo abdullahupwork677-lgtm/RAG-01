@@ -29,7 +29,7 @@ A full-stack **Retrieval-Augmented Generation (RAG)** application that lets you 
 |-------|-----------|------|
 | **Vector Store** | ChromaDB | Stores document chunk embeddings locally |
 | **Embeddings** | Sentence Transformers (`all-MiniLM-L6-v2`) | Converts text chunks to 384-dim vectors |
-| **LLM** | Groq (`llama-3.1-8b-instant`) | Generates grounded answers from retrieved context |
+| **LLM** | Groq (`openai/gpt-oss-20b`) | Generates grounded answers from retrieved context |
 | **API** | FastAPI | Serves the RAG pipeline over HTTP |
 | **Frontend** | Next.js 16 + React 19 | Chat UI with source citations |
 

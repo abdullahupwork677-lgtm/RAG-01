@@ -61,9 +61,9 @@ def ingest():
     docs = load_all_docs(DOCS_FOLDER)
 
     if not docs:
-        print(f"  No PDFs or TXT files found in '{DOCS_FOLDER}/' folder.")
-        print("  Add some files and run ingest.py again.")
-        return
+        msg = f"No PDFs or TXT files found in '{DOCS_FOLDER}/' folder."
+        print(f"  {msg}")
+        return {"success": False, "message": msg, "chunks": 0, "files": 0}
 
     print(f"\n[2/4] Chunking documents...")
     all_chunks = []
@@ -99,8 +99,9 @@ def ingest():
         metadatas=all_meta,
     )
 
-    print(f"\nDone! {len(all_chunks)} chunks stored in ChromaDB.")
-    print("Run: python query.py to start asking questions.")
+    msg = f"{len(all_chunks)} chunks from {len(docs)} files stored in ChromaDB."
+    print(f"\nDone! {msg}")
+    return {"success": True, "message": msg, "chunks": len(all_chunks), "files": len(docs)}
 
 
 if __name__ == "__main__":

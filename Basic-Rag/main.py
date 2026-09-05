@@ -13,7 +13,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3002","api.turboturismo.com"],
+    allow_origins=["http://localhost:3001","https://rag.turboturismo.com"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

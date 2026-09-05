@@ -10,7 +10,7 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY not set. Add it to your .env file.")
-GROQ_MODEL      = "llama-3.1-8b-instant"
+GROQ_MODEL      = "openai/gpt-oss-20b"
 COLLECTION_NAME = "my_docs"
 TOP_K           = 5
 # ──────────────────────────────────────────────────────────
@@ -21,6 +21,11 @@ collection = None
 def load():
     global model, collection
     model = SentenceTransformer("all-MiniLM-L6-v2")
+    client = chromadb.PersistentClient(path="./chroma_db")
+    collection = client.get_collection(COLLECTION_NAME)
+
+def reload_collection():
+    global collection
     client = chromadb.PersistentClient(path="./chroma_db")
     collection = client.get_collection(COLLECTION_NAME)
 
@@ -50,6 +55,7 @@ Answer:"""
         model=GROQ_MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
+        # reasoning_effort="low",
     )
     return {
         "answer": response.choices[0].message.content,

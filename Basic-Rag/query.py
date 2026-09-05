@@ -7,7 +7,7 @@ from groq import Groq
 GROQ_API_KEY    = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise RuntimeError("GROQ_API_KEY not set. Add it to your .env file.")
-GROQ_MODEL      = "llama-3.1-8b-instant"           # Free & fast
+GROQ_MODEL      = "openai/gpt-oss-20b"           # Free & fast
 COLLECTION_NAME = "my_docs"
 TOP_K           = 5                          # How many chunks to retrieve
 # ──────────────────────────────────────────────────────────
