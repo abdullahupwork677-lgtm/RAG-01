@@ -33,7 +33,7 @@ export default function DocumentUpload({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const API_URL =
-    process.env.NEXT_PUBLIC_API_URL ?? "https://rag.turboturismo.com";
+    process.env.NEXT_PUBLIC_API_URL ?? "https://api.turboturismo.com";
 
   async function handleFiles(files: FileList | File[]) {
     const list = Array.from(files);

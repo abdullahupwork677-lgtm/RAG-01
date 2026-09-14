@@ -15,7 +15,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://api.turboturismo.com"],
+    allow_origins=["https://rag.turboturismo.com"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -7,7 +7,7 @@ import type {
   User,
 } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://rag.turboturismo.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://api.turboturismo.com";
 const TOKEN_KEY = "chatpdf_token";
 
 export class ChatApiError extends Error {}
