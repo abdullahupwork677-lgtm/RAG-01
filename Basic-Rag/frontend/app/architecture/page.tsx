@@ -3,18 +3,18 @@ import Link from "next/link";
 import ArchitectureDiagram from "@/components/ArchitectureDiagram";
 
 export const metadata: Metadata = {
-  title: "Architecture - Turbo Turismo AI",
+  title: "Architecture - ChatPDF",
   description:
-    "Grounded RAG pipeline behind the Turbo Turismo document assistant.",
+    "Grounded RAG pipeline behind the ChatPDF document assistant.",
 };
 
 export default function ArchitecturePage() {
   return (
-    <div className="w-full bg-[#0A0B0D] text-[#F1F0EC]">
+    <div className="arch-page w-full">
       <div className="mx-auto w-full max-w-[1440px] px-5 py-6 sm:px-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-[#868C9A] transition-colors hover:text-[#2FD4E8]"
+          className="back-link inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors"
         >
           <svg
             className="h-3.5 w-3.5"

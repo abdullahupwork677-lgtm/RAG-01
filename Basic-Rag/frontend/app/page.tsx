@@ -1,434 +1,380 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import ChatMessage from "@/components/ChatMessage";
-import ChatInput from "@/components/ChatInput";
-import DocumentUpload from "@/components/DocumentUpload";
-import { sendChatMessage, ChatApiError } from "@/lib/api";
-import { ChatMessage as ChatMessageType } from "@/lib/types";
 
-function uid() {
-  return Math.random().toString(36).slice(2, 10);
+function ChevronDown() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
 }
 
-export default function Home() {
-  const [messages, setMessages] = useState<ChatMessageType[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showUpload, setShowUpload] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({
-      top: scrollRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [messages, loading]);
-
-  const handleSubmit = async () => {
-    const query = input.trim();
-    if (!query || loading) return;
-
-    const userMessage: ChatMessageType = { id: uid(), role: "user", content: query };
-    const history = messages;
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const { answer, sources } = await sendChatMessage(query, history);
-      setMessages((prev) => [
-        ...prev,
-        { id: uid(), role: "assistant", content: answer, sources },
-      ]);
-    } catch (err) {
-      const message =
-        err instanceof ChatApiError
-          ? err.message
-          : "Something went wrong reaching the backend.";
-      setMessages((prev) => [
-        ...prev,
-        { id: uid(), role: "assistant", content: message, isError: true },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleReset = () => {
-    setMessages([]);
-    setShowUpload(false);
-  };
-
-  const handleUploadComplete = (result: {
-    filename: string;
-    success: boolean;
-    message: string;
-    chunks: number;
-    files: number;
-  }) => {
-    setShowUpload(false);
-    const status = result.success ? "Upload successful" : "Upload failed";
-    const detail = result.success
-      ? `Ingested "${result.filename}" - ${result.chunks} chunks across your knowledge base.`
-      : result.message;
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: uid(),
-        role: "assistant",
-        content: `${status}. ${detail}`,
-        isError: !result.success,
-      },
-    ]);
-  };
+export default function LandingPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <div className="hero-bg flex min-h-screen w-full items-stretch p-0 lg:h-screen lg:overflow-hidden lg:p-12">
-      <div className="mx-auto flex h-full w-full max-w-[1600px] flex-col gap-10 px-6 py-10 lg:flex-row lg:gap-14 lg:px-0 lg:py-0">
-        {/* Intro / purpose */}
-        <aside className="flex w-full flex-col lg:w-[42%]">
-          <div className="flex flex-col justify-center lg:min-h-full">
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <div className="font-mono text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">
-                  Turbo Turismo · AI Assistant
-                </div>
-                <span className="hidden h-3 w-px bg-black/15 sm:block" />
-                <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-text-faint">
-                  <span>Developed by Abdullah</span>
-                  <a
-                    href="https://www.linkedin.com/in/abdullahchhota"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="LinkedIn"
-                    title="LinkedIn"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0A66C2] text-white transition-transform hover:scale-110"
-                  >
-                    <svg
-                      className="h-3 w-3"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="https://www.upwork.com/freelancers/~010812df1014883cbc"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Upwork"
-                    title="Upwork"
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#14A800] text-white transition-transform hover:scale-110"
-                  >
-                    <svg
-                      className="h-3 w-3"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06 1.492 0 2.703 1.212 2.703 2.703-.001 1.489-1.212 2.702-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112c-.002 1.406-1.141 2.546-2.547 2.548-1.405-.002-2.543-1.143-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-              <h1 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-text lg:text-[2.75rem]">
-                Instant Answers From Your Own Documents
-              </h1>
-              <div className="space-y-4 text-[15px] leading-relaxed text-text-dim">
-                <p>
-                  Upload your documents, and get accurate, grounded answers in
-                  seconds. No more digging through PDFs, contracts, or reports
-                  to find what you need: just ask in plain language, and the
-                  system retrieves the exact information from your files and
-                  gives you a clear, sourced answer.
-                </p>
-                <p>
-                  Every response is based strictly on your uploaded content:
-                  no guessing, no hallucination. You can ingest as many
-                  documents as you like: manuals, policies, research papers,
-                  internal wikis, whatever you work with. And query them
-                  anytime through a simple chat interface. It&apos;s like having
-                  a personal assistant that&apos;s read everything you own and
-                  always tells you the truth about it.
-                </p>
-              </div>
-            </div>
+    <>
+    <div className="shell">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="logo-row">
+          <div className="logo-mark">C</div>
+          <span className="logo-word">ChatPDF</span>
+        </div>
 
-            <div className="mt-10 flex max-w-md flex-col gap-3 sm:flex-row">
-              <button
-                onClick={() => setShowUpload(true)}
-                className="group flex flex-1 items-center justify-center gap-2.5 rounded-[4px] bg-accent px-6 py-3.5 font-mono text-[13px] font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-accent-hover active:translate-y-px"
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                  />
-                </svg>
-                Upload documents
-              </button>
-              <button
-                onClick={handleReset}
-                className="flex flex-1 items-center justify-center gap-2.5 rounded-[4px] border border-black/15 px-6 py-3.5 font-mono text-[13px] font-semibold uppercase tracking-[0.12em] text-text transition-colors hover:border-black/40 hover:bg-black/[0.03] active:translate-y-px"
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4.5v15m7.5-7.5h-15"
-                  />
-                </svg>
-                New chat
-              </button>
-            </div>
+        <Link href="/chat" className="new-chat-btn">
+          <span className="plus-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </span>
+          New chat
+        </Link>
 
-            <Link
-              href="/architecture"
-              className="group mt-6 flex w-full max-w-md items-center justify-between gap-3 rounded-[6px] border-2 border-accent bg-accent px-7 py-6 font-mono text-[15px] font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-accent-hover hover:border-accent-hover active:translate-y-px"
-            >
-              <span className="flex items-center gap-3">
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"
-                  />
-                </svg>
-                View AI architecture
-              </span>
-              <svg
-                className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
+        <div className="nav-section">
+          <div className="nav-label">Chats</div>
+          <div className="empty-hint">Start your first chat</div>
+        </div>
+
+        <div className="nav-section">
+          <div className="nav-label">Tools</div>
+          <Link href="/chat" className="nav-item">
+            <span className="nav-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
               </svg>
+            </span>
+            YouTube Chat
+          </Link>
+        </div>
+
+        <div className="sidebar-footer">
+          <div className="signup-card">
+            <p>Sign up for free to save your chat history</p>
+            <Link href="/register" className="btn-primary btn-sm" style={{ textDecoration: "none" }}>
+              Sign up
             </Link>
-
-            <div className="mt-10 max-w-md border-t border-black/10 pt-6">
-              <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-text-faint">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" />
-                Grounded answers only
-              </div>
-              <p className="mt-1.5 text-[13px] text-text-faint">
-                No hallucinations. Every response cites the source files it
-                comes from.
-              </p>
-            </div>
-          </div>
-        </aside>
-
-        {/* Chat */}
-        <main className="flex w-full flex-col overflow-hidden rounded-[6px] border border-black/10 bg-panel lg:w-[58%]">
-          <header className="flex w-full shrink-0 items-center justify-between border-b border-black/10 bg-white px-5 py-4">
-            <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-white">
-                <svg
-                  className="h-4.5 w-4.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
-                  />
-                </svg>
-              </span>
-              <div>
-                <div className="font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-text">
-                  Turbo Turismo
-                </div>
-                <div className="text-[11px] text-text-faint">
-                  Document assistant
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowUpload(true)}
-              className="flex items-center gap-1.5 rounded-[3px] border border-black/15 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-text transition-colors hover:border-black/40 hover:bg-black/[0.03]"
-            >
-              <svg
-                className="h-3.5 w-3.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                />
-              </svg>
-              Upload
-            </button>
-          </header>
-
-          <div
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto p-6 sm:p-8 thin-scroll"
-          >
-            <div className="space-y-4">
-              {messages.length === 0 && !loading && (
-                <div className="py-12 text-center">
-                  <div className="font-mono text-xs uppercase tracking-[0.2em] text-text-faint">
-                    Ask us anything
-                  </div>
-                  <p className="mt-1 text-sm text-text-dim">
-                    Answers are grounded strictly in your uploaded documents.
-                  </p>
-                  <Link
-                    href="/architecture"
-                    className="mt-4 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.16em] text-text-faint transition-colors hover:text-accent"
-                  >
-                    See how it works on the architecture page
-                    <svg
-                      className="h-3.5 w-3.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                      />
-                    </svg>
-                  </Link>
-                </div>
-              )}
-
-              {messages.map((m) => (
-                <ChatMessage key={m.id} message={m} />
-              ))}
-
-              {loading && (
-                <div className="flex gap-1 px-1">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-accent thinking-dot"
-                    style={{ animationDelay: "0ms" }}
-                  />
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-accent thinking-dot"
-                    style={{ animationDelay: "150ms" }}
-                  />
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-accent thinking-dot"
-                    style={{ animationDelay: "300ms" }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="shrink-0 border-t border-black/10 bg-white p-4">
-            <ChatInput
-              value={input}
-              onChange={setInput}
-              onSubmit={handleSubmit}
-              disabled={loading}
-            />
-          </div>
-        </main>
-      </div>
-
-      {/* Upload modal */}
-      {showUpload && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-          onClick={() => setShowUpload(false)}
-        >
-          <div
-            className="w-full max-w-md rounded-[6px] border border-black/10 bg-white p-7 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="font-display text-2xl font-semibold text-text">
-                  Upload documents
-                </h2>
-                <p className="mt-1 text-[13px] text-text-dim">
-                  PDF or TXT - chunked, embedded, and indexed automatically.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowUpload(false)}
-                aria-label="Close upload dialog"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-text-faint transition-colors hover:bg-black/5 hover:text-text"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div className="mt-5">
-              <DocumentUpload
-                onComplete={handleUploadComplete}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="mt-4 flex items-start gap-2.5 rounded-[3px] bg-black/[0.03] px-3 py-2.5 text-[12px] leading-relaxed text-text-dim">
-              <svg
-                className="mt-0.5 h-4 w-4 shrink-0 text-text-faint"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.8}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
-                />
-              </svg>
-              Documents are stored locally and used only to answer your
-              questions.
-            </div>
           </div>
         </div>
-      )}
-    </div>
+      </aside>
+
+      {/* Main */}
+      <div className="main">
+        {/* Topbar */}
+        <div className="topbar">
+          <Link href="/login" className="btn-ghost btn-sm" style={{ textDecoration: "none" }}>
+            Log in
+          </Link>
+          <Link href="/register" className="btn-primary btn-sm" style={{ textDecoration: "none" }}>
+            Sign up
+          </Link>
+        </div>
+
+        {/* Hero */}
+        <section className="hero">
+          <div className="pill-row">
+            <span className="pill active">Chat</span>
+            <span className="pill">Summary</span>
+            <span className="pill">YouTube Chat</span>
+          </div>
+
+          <h1>
+            Chat with any <span className="hl">file</span>, <span className="hl">video</span> or <span className="hl">website</span>
+          </h1>
+
+          <Link href="/chat" className="dropzone" style={{ textDecoration: "none" }}>
+            <div className="dz-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </div>
+            <div className="dz-title">Drop a file or <b>upload</b></div>
+            <div className="dz-sub">PDF · DOC · PPT · TXT — up to 32MB</div>
+          </Link>
+
+          <div className="input-row">
+            <input type="text" placeholder="Ask to start a chat" readOnly style={{ cursor: "pointer" }} onClick={() => window.location.href = "/chat"} />
+            <button className="send-btn" onClick={() => window.location.href = "/chat"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+          <div className="kbd-hint"><kbd>CTRL</kbd> + <kbd>V</kbd> to paste text or links</div>
+
+          <div className="trust-row">
+            <img className="uni-logo" src="/harvard.avif" alt="Harvard University" />
+            <img className="uni-logo" src="/cambridge.avif" alt="University of Cambridge" />
+            <img className="uni-logo" src="/oxford.avif" alt="University of Oxford" />
+            <img className="uni-logo" src="/stanford.avif" alt="Stanford University" />
+          </div>
+
+          <div className="stat-row">
+            <div className="stat">
+              <span className="num">10M+</span>
+              <span className="lbl">Researchers &amp; users</span>
+            </div>
+            <div className="stat">
+              <span className="num">1,000,000+</span>
+              <span className="lbl">Q&apos;s answered every day</span>
+            </div>
+            <div className="stat">
+              <span className="num">Top 50</span>
+              <span className="lbl">Gen AI apps of 2024</span>
+            </div>
+          </div>
+
+          <div className="quote">
+            <p>&quot;It&apos;s like ChatGPT, but for research papers.&quot;</p>
+            <div className="who">Mushtaq Bilal, PhD · @MushtaqBilalPhD</div>
+          </div>
+        </section>
+
+        {/* Nutshell */}
+        <section className="block">
+          <div className="block-head">
+            <div className="eyebrow">ChatPDF in a Nutshell</div>
+            <h2>Your PDF AI — like ChatGPT but for PDFs.<br />Summarize and answer questions for free.</h2>
+          </div>
+          <div className="grid-3-col">
+            <div className="feature-card">
+              <div className="ic">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+              </div>
+              <h3>For Researchers</h3>
+              <p>Explore scientific papers, academic articles, and books to get the information you need for your research.</p>
+            </div>
+            <div className="feature-card">
+              <div className="ic">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+              </div>
+              <h3>For Students</h3>
+              <p>Study for exams, get help with homework, and answer multiple choice questions faster than your classmates.</p>
+            </div>
+            <div className="feature-card">
+              <div className="ic">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>
+              </div>
+              <h3>For Professionals</h3>
+              <p>Navigate legal contracts, financial reports, manuals, and training material. Ask questions to any PDF to stay ahead.</p>
+            </div>
+            <div className="feature-card">
+              <div className="ic">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+              </div>
+              <h3>Cited Sources</h3>
+              <p>Built-in citations anchor responses to PDF references. No more page-by-page searching.</p>
+            </div>
+            <div className="feature-card">
+              <div className="ic">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h3>Multi-File Chats</h3>
+              <p>Create folders to organize your files and chat with multiple PDFs in one single conversation.</p>
+            </div>
+            <div className="feature-card">
+              <div className="ic">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </div>
+              <h3>Any Language</h3>
+              <p>Works worldwide! ChatPDF accepts PDFs in any language and can chat in any language.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Wall of Love */}
+        <section className="block">
+          <div className="block-head">
+            <div className="eyebrow">Wall of Love</div>
+            <h2>Across borders, beyond languages: AI is revolutionizing the understanding of research worldwide.</h2>
+          </div>
+          <div className="tweet-grid">
+            <div className="tweet-card">
+              <div className="tweet-head">
+                <div className="avatar" />
+                <div>
+                  <div className="n">森山大朗(たいろー)</div>
+                  <div className="h">@tairo</div>
+                </div>
+              </div>
+              <p>これヤバいでしょ。『ChatPDF』は生成AIを応用したサービス。難しい論文をめちゃくちゃ簡単に理解できます。</p>
+              <div className="tweet-stats">1,062 Reposts · 6,137 Likes · 1M Views</div>
+            </div>
+            <div className="tweet-card">
+              <div className="tweet-head">
+                <div className="avatar" />
+                <div>
+                  <div className="n">Mushtaq Bilal, PhD</div>
+                  <div className="h">@MushtaqBilalPhD</div>
+                </div>
+              </div>
+              <p>ChatPDF is an AI-powered app that will make reading journal articles easier and faster. It&apos;s like ChatGPT, but for research papers.</p>
+              <div className="tweet-stats">3,945 Reposts · 18.2K Likes · 2.9M Views</div>
+            </div>
+            <div className="tweet-card">
+              <div className="tweet-head">
+                <div className="avatar" />
+                <div>
+                  <div className="n">Wormssceo</div>
+                  <div className="h">@wormssceo</div>
+                </div>
+              </div>
+              <p>&lt;AI 툴 소개&gt; 오늘도 여러분께 유용한 AI 툴 하나를 소개해드리려고 합니다. PDF파일을 바로 요약해주는 ChatPDF입니다.</p>
+              <div className="tweet-stats">558 Reposts · 755 Likes · 77K Views</div>
+            </div>
+          </div>
+        </section>
+
+        {/* PDF Interactions */}
+        <section className="block">
+          <div className="block-head">
+            <div className="eyebrow">PDF Interactions Made Simple</div>
+            <h2>Summarize, compare, and ask questions to any PDF. Fast and free.</h2>
+          </div>
+          <div className="feature-grid-stacked">
+            <div className="feature-card-stacked">
+              <img className="feature-img" src="/folders.avif" alt="Multi-File Chats" />
+              <div className="txt">
+                <h3>ORGANIZE — Multi-File Chats</h3>
+                <p>Bring multiple PDFs into one conversation. Keep your study materials, papers, or project files easily accessible in one chat.</p>
+              </div>
+            </div>
+            <div className="feature-card-stacked">
+              <img className="feature-img" src="/professionals.avif" alt="Summarize PDFs" />
+              <div className="txt">
+                <h3>SIMPLIFY — Summarize PDFs</h3>
+                <p>Summarize academic articles, research papers, or reports. Extract the key insights without reading everything.</p>
+              </div>
+            </div>
+            <div className="feature-card-stacked">
+              <img className="feature-img" src="/languages.avif" alt="Translate PDFs" />
+              <div className="txt">
+                <h3>UNDERSTAND — Translate PDFs</h3>
+                <p>Make any PDF speak your language. Transform documents from around the world into clear, readable text you can understand instantly.</p>
+              </div>
+            </div>
+            <div className="feature-card-stacked">
+              <img className="feature-img" src="/cited-sources.avif" alt="Side-by-Side View" />
+              <div className="txt">
+                <h3>NAVIGATE — Side-by-Side View</h3>
+                <p>Keep the chat and PDF open together. Answers are linked to the original PDF content, making it simple to verify or explore further.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="block">
+          <div className="block-head">
+            <h2>Frequently Asked Questions</h2>
+          </div>
+          <div className="faq">
+            {[
+              {
+                q: "What is ChatPDF and how can it help me?",
+                a: "ChatPDF brings the power of conversational AI to your documents, letting you chat with your PDFs as easily as using ChatGPT. Whether you're studying, researching, or analyzing documents, our platform helps you understand and extract information in seconds.",
+              },
+              {
+                q: "Is ChatPDF free?",
+                a: "Yes! We offer a free plan that lets you analyze 2 documents every day. For power users, our Plus plan provides unlimited document analysis and more advanced features.",
+              },
+              {
+                q: "How does ChatPDF's AI technology work?",
+                a: "ChatPDF uses sophisticated AI to build a comprehensive map of your document's content and meaning, then generates clear, accurate answers with citations back to the source.",
+              },
+              {
+                q: "Does ChatPDF support file types other than PDFs?",
+                a: "Yes — PDF, Word (.doc, .docx), PowerPoint (.ppt, .pptx), Markdown (.md), and plain text files are all supported.",
+              },
+              {
+                q: "Do I need to create an account to use ChatPDF?",
+                a: "Yes — a free account keeps your chats, uploaded documents, and their history private to you and available across sessions. Sign up takes seconds.",
+              },
+              {
+                q: "Is my data secure and confidential?",
+                a: "Documents are protected with SSL encryption in transit and remain encrypted at rest, with full control to delete your data at any time.",
+              },
+            ].map((item, i) => (
+              <div key={i} className={`faq-item${openFaq === i ? " open" : ""}`}>
+                <button className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                  {item.q}
+                  <span className="chev"><ChevronDown /></span>
+                </button>
+                <div className="faq-a"><p>{item.a}</p></div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      </div>
+
+      {/* Footer */}
+      <footer className="landing-footer">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <div className="logo-row" style={{ padding: 0 }}>
+              <div className="logo-mark">C</div>
+              <span className="logo-word">ChatPDF</span>
+            </div>
+            <p>ChatPDF brings ChatGPT-style intelligence and PDF AI technology together for smarter document understanding. Summarize, chat, analyze — start now.</p>
+            <div className="stars">★★★★★ <span style={{ color: "var(--text-2)", fontSize: 13 }}>4.9</span></div>
+          </div>
+          <div className="footer-col">
+            <h4>Tools</h4>
+            <ul>
+              <li><Link href="/chat">Chat with PDF</Link></li>
+              <li><Link href="/chat">Chat with YouTube</Link></li>
+              <li><Link href="/chat">PDF Summary</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Features</h4>
+            <ul>
+              <li><Link href="/chat">Cited sources</Link></li>
+              <li><Link href="/chat">Multi-file chats</Link></li>
+              <li><Link href="/chat">Any language</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Account</h4>
+            <ul>
+              <li><Link href="/login">Log in</Link></li>
+              <li><Link href="/register">Sign up</Link></li>
+              <li><Link href="/forgot-password">Reset password</Link></li>
+            </ul>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>&copy; 2026 ChatPDF UI Clone — for practice/learning only</span>
+          <span>Not affiliated with ChatPDF.com</span>
+        </div>
+      </footer>
+    </>
   );
 }

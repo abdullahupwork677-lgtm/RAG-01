@@ -1,0 +1,93 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── CI: Backend ────────────────────────────────────────
+  ci-backend:
+    name: CI - Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Syntax check
+        run: python -m compileall -q .
+
+      - name: Import smoke test
+        env:
+          GROQ_API_KEY: ci-placeholder
+        run: python -c "import main, rag_service, ingest, query, routes.rag"
+
+  # ── CI: Frontend ───────────────────────────────────────
+  ci-frontend:
+    name: CI - Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+  # ── CD: Deploy to VPS (SSH + PM2) ─────────────────────
+  deploy:
+    name: Deploy to production
+    needs: [ci-backend, ci-frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || '22' }}
+          script: |
+            set -e
+            cd /var/www/nextjs-RAG/Basic-Rag
+            git pull --ff-only origin main
+
+            # Backend
+            ./env/bin/python3 -m pip install --quiet -r requirements.txt
+            pm2 restart rag-backend
+
+            # Frontend
+            cd frontend
+            npm ci
+            npm run build
+            cd ..
+
+            # Frontend process name: adjust if your PM2 app is named differently.
+            pm2 restart rag-frontend 2>/dev/null \
+              || echo "No PM2 app named 'rag-frontend'. Restart it manually or update the workflow."
