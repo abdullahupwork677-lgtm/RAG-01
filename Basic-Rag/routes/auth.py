@@ -264,7 +264,7 @@ async def forgot_password(req: ForgotPasswordRequest):
     conn.commit()
     conn.close()
 
-    reset_link = f"{os.getenv('FRONTEND_URL', 'https://rag.turboturismo.com')}/reset-password?token={token}"
+    reset_link = f"{os.getenv('FRONTEND_URL', 'https://api.turboturismo.com')}/reset-password?token={token}"
     sent = _send_reset_email(email, reset_link)
     return {
         "ok": True,
